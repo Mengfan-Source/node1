@@ -244,3 +244,63 @@ rosbag play 2022-09-16-06-54-27.bag /camera/color/image_raw:=/camera/rgb/image_r
 在录制话题时发现缺少一些话题，IMU数据和同步的深度数据，将这里改为true，即可生成同步的深度数据，并且在生成同步的深度
 
 ![image-20220916225116527](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20220916225116527.png)
+
+
+
+
+
+
+
+
+
+【JETSON-NANO】SD卡系统备份克隆
+luoganttcc
+于 2021-03-14 11:53:29 发布 1050
+收藏 11
+分类专栏： 机器视觉 jetson nano 实战
+版权
+机器视觉 同时被 2 个专栏收录
+140 篇文章 8 订阅
+订阅专栏
+jetson nano 实战
+14 篇文章 2 订阅
+订阅专栏
+
+添加链接描述
+
+添加链接描述
+1、连接SD卡到主机
+
+    将装好系统的SD卡通过读卡器连接主机。通过命令要看SD卡：
+
+sudo fdisk -l
+
+    1
+
+    会有很多内容，可以在插入SD卡前后分别执行该命令，这样通过对比不同之处就可以找到/dev/sdc是这个SD卡，看到的有数字的是这个卡的各个分区。
+
+2、对SD卡模型进行备份
+
+    我们使用的是dd命令，关于dd命令的详细说明参看另外一份博客,使用过程中要小心，避免原文件损坏。要说明的是，系统备份直接使用dd命令原SD卡存储多大，备份的文件就会有多大，所以要进行压缩备份；另外，对备份文件的恢复等其它操作要在同一台Host上进行操作。
+    备份命令为：
+
+sudo dd if=/dev/sdc conv=sync,noerror bs=8M | gzip -c > ~/nano.img.gz
+
+    1
+
+也可以同时输出日志
+
+＃　sudo dd if=/dev/sdc conv=sync,noerror bs=120M status=progress  | gzip -c > ~/nano.img.gz
+
+    1
+
+3、等待30分钟
+4、插入一张新的格式化好的sd 卡，复制系统
+
+sudo gzip -dc /home/ledi/nano.img.gz | sudo dd of=/dev/sdc  bs=120M status=progress
+
+
+
+
+
+
